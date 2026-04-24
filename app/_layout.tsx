@@ -1,24 +1,28 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { globalStyles } from '@/styles/global-styles'
+import { useFonts } from 'expo-font'
+import { Slot } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import { View } from 'react-native'
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+const RootLayout = () => {
+  //Cargamos la fuente personalizada y obtenemos el estado de carga
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf')
+  })
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+  //Evita renderizar la app hasta que las fuentes estén cargadas
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  if (!loaded) {
+    return null
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    //Aplicamos flex 1 y color de fondo para que la app ocupe toda la pantalla y tenga el fondo definido en Colors
+    <View style={globalStyles.background}>
+      <Slot />
+      <StatusBar style="light" />
+    </View>
+  )
 }
+
+export default RootLayout
